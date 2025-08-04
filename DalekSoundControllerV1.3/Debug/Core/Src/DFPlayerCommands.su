@@ -1,0 +1,5 @@
+../Core/Src/DFPlayerCommands.c:87:6:UARTSend	0	static
+../Core/Src/DFPlayerCommands.c:21:6:UARTCommand	56	static
+../Core/Src/DFPlayerCommands.c:10:6:MiniPlayerInit	8	static
+../Core/Src/DFPlayerCommands.c:43:6:UARTCommandNoDelay	56	static
+../Core/Src/DFPlayerCommands.c:65:6:UARTCommandF	56	static

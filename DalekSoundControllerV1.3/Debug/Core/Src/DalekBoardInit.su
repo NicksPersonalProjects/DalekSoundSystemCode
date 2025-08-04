@@ -1,0 +1,5 @@
+../Core/Src/DalekBoardInit.c:12:6:TimersInit	24	static
+../Core/Src/DalekBoardInit.c:149:6:RGBColor	8	static
+../Core/Src/DalekBoardInit.c:166:6:ColorChanger	40	static
+../Core/Src/DalekBoardInit.c:173:9:SingleFlagCheck	4	static
+../Core/Src/DalekBoardInit.c:70:6:FlagChecker	24	static
