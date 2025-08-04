@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := DalekSoundControllerV1.3
+BUILD_ARTIFACT_NAME := DemoDalekSoundController
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-DalekSoundControllerV1.3.elf \
+DemoDalekSoundController.elf \
 
 MAP_FILES += \
-DalekSoundControllerV1.3.map \
+DemoDalekSoundController.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-DalekSoundControllerV1.3.list \
+DemoDalekSoundController.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: DalekSoundControllerV1.3.elf secondary-outputs
+main-build: DemoDalekSoundController.elf secondary-outputs
 
 # Tool invocations
-DalekSoundControllerV1.3.elf DalekSoundControllerV1.3.map: $(OBJS) $(USER_OBJS) C:\Users\nicho\STM32CubeIDE\workspace_1.18.0\DalekSoundControllerV1.3\STM32F100RDTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "DalekSoundControllerV1.3.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\nicho\STM32CubeIDE\workspace_1.18.0\DalekSoundControllerV1.3\STM32F100RDTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DalekSoundControllerV1.3.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+DemoDalekSoundController.elf DemoDalekSoundController.map: $(OBJS) $(USER_OBJS) C:\Users\nicho\git\DalekSoundSystemCode\DemoDalekSoundController\STM32F100RDTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "DemoDalekSoundController.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\nicho\git\DalekSoundSystemCode\DemoDalekSoundController\STM32F100RDTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DemoDalekSoundController.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-DalekSoundControllerV1.3.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "DalekSoundControllerV1.3.list"
+DemoDalekSoundController.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "DemoDalekSoundController.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) DalekSoundControllerV1.3.elf DalekSoundControllerV1.3.list DalekSoundControllerV1.3.map default.size.stdout
+	-$(RM) DemoDalekSoundController.elf DemoDalekSoundController.list DemoDalekSoundController.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
