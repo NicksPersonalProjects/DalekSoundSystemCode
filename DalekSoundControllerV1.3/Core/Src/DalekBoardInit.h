@@ -17,7 +17,7 @@
 
 #define RGBDimmer			  100 //percentage, max 100
 
-#define MinPeriod 31500 //28400 //any PWM period reads less than this will be ignored
+#define MinPeriod 21500 //28400 //any PWM period reads less than this will be ignored
 #define MaxRedundancyCheck 3 //number of times a PWM needs to read the same value before it is accepted
 
 #define PrescalarValue 4
