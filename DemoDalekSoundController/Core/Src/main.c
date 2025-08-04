@@ -140,7 +140,7 @@ int main(void)
   CurrentVolume = (ADC1->DR);
   UARTCommand(SetVolume, 0, CurrentVolume);
   UARTCommand(PlaySong, 5, 1);
-
+  ColorChanger(255, 255, 255, 0, 0, 0, 50);
   /* USER CODE END 2 */
 
   /* Infinite loop */
