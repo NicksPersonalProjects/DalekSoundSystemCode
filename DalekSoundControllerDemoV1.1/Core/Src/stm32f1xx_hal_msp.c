@@ -165,14 +165,11 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /**TIM1 GPIO Configuration
     PA8     ------> TIM1_CH1
     */
-    GPIO_InitStruct.Pin = PWMInput1_Pin;
+    GPIO_InitStruct.Pin = PWMInput1_DWTheme_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(PWMInput1_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(PWMInput1_DWTheme_GPIO_Port, &GPIO_InitStruct);
 
-    /* TIM1 interrupt Init */
-    HAL_NVIC_SetPriority(TIM1_CC_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
     /* USER CODE BEGIN TIM1_MspInit 1 */
 
     /* USER CODE END TIM1_MspInit 1 */
@@ -189,10 +186,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /**TIM2 GPIO Configuration
     PA0-WKUP     ------> TIM2_CH1
     */
-    GPIO_InitStruct.Pin = PWMInput4_Pin;
+    GPIO_InitStruct.Pin = PWMInput4_Blaster_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(PWMInput4_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(PWMInput4_Blaster_GPIO_Port, &GPIO_InitStruct);
 
     /* USER CODE BEGIN TIM2_MspInit 1 */
 
@@ -210,10 +207,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /**TIM3 GPIO Configuration
     PC6     ------> TIM3_CH1
     */
-    GPIO_InitStruct.Pin = PWMInput2_Pin;
+    GPIO_InitStruct.Pin = PWMInput2_MainLights_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(PWMInput2_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(PWMInput2_MainLights_GPIO_Port, &GPIO_InitStruct);
 
     __HAL_AFIO_REMAP_TIM3_ENABLE();
 
@@ -233,10 +230,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /**TIM4 GPIO Configuration
     PB6     ------> TIM4_CH1
     */
-    GPIO_InitStruct.Pin = PWMInput3_Pin;
+    GPIO_InitStruct.Pin = PWMInput3_Exterminate_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(PWMInput3_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(PWMInput3_Exterminate_GPIO_Port, &GPIO_InitStruct);
 
     /* USER CODE BEGIN TIM4_MspInit 1 */
 
@@ -299,10 +296,10 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
     /**TIM1 GPIO Configuration
     PA11     ------> TIM1_CH4
     */
-    GPIO_InitStruct.Pin = GreenCtrl_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_11;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GreenCtrl_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* USER CODE BEGIN TIM1_MspPostInit 1 */
 
@@ -338,7 +335,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
     PC8     ------> TIM3_CH3
     PC9     ------> TIM3_CH4
     */
-    GPIO_InitStruct.Pin = MainLights_Pin|BlueCtrl_Pin;
+    GPIO_InitStruct.Pin = MainLightControl_Pin|BlueCtrl_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -371,10 +368,8 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     PA8     ------> TIM1_CH1
     PA11     ------> TIM1_CH4
     */
-    HAL_GPIO_DeInit(GPIOA, PWMInput1_Pin|GreenCtrl_Pin);
+    HAL_GPIO_DeInit(GPIOA, PWMInput1_DWTheme_Pin|GPIO_PIN_11);
 
-    /* TIM1 interrupt DeInit */
-    HAL_NVIC_DisableIRQ(TIM1_CC_IRQn);
     /* USER CODE BEGIN TIM1_MspDeInit 1 */
 
     /* USER CODE END TIM1_MspDeInit 1 */
@@ -391,7 +386,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     PA0-WKUP     ------> TIM2_CH1
     PA3     ------> TIM2_CH4
     */
-    HAL_GPIO_DeInit(GPIOA, PWMInput4_Pin|RedCtrl_Pin);
+    HAL_GPIO_DeInit(GPIOA, PWMInput4_Blaster_Pin|RedCtrl_Pin);
 
     /* USER CODE BEGIN TIM2_MspDeInit 1 */
 
@@ -410,7 +405,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     PC8     ------> TIM3_CH3
     PC9     ------> TIM3_CH4
     */
-    HAL_GPIO_DeInit(GPIOC, PWMInput2_Pin|MainLights_Pin|BlueCtrl_Pin);
+    HAL_GPIO_DeInit(GPIOC, PWMInput2_MainLights_Pin|MainLightControl_Pin|BlueCtrl_Pin);
 
     /* USER CODE BEGIN TIM3_MspDeInit 1 */
 
@@ -427,7 +422,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     /**TIM4 GPIO Configuration
     PB6     ------> TIM4_CH1
     */
-    HAL_GPIO_DeInit(PWMInput3_GPIO_Port, PWMInput3_Pin);
+    HAL_GPIO_DeInit(PWMInput3_Exterminate_GPIO_Port, PWMInput3_Exterminate_Pin);
 
     /* USER CODE BEGIN TIM4_MspDeInit 1 */
 

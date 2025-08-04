@@ -1,4 +1,5 @@
 /* USER CODE BEGIN Header */
+
 /**
   ******************************************************************************
   * @file           : main.c
@@ -22,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "DFPlayerCommands.h"
+#include "DalekBoardInit.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -100,6 +102,8 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 
+  //Include ADC init, UART init, PWM inits
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -113,17 +117,30 @@ int main(void)
   MX_UART4_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
+  TimersInit();
   MiniPlayerInit();
-  UARTCommand(PlaybackType, 0, 1);
 
-  TIM1->DIER |= TIM_DIER_CC1IE | TIM_DIER_CC2IE;
+  //Flag Declaration
 
-  int Period;
-  int OnTime;
+  Flag ThemePlaying = LOW, BlasterLoopCheck = LOW, LightStatus = LOW, ExterminateLoopCheck = LOW;
 
-  uint8_t DWSongDutyCycle = 7;
+  typedef enum SFMstates
+  {Volume, LightsOn, LightsOff, Exterminate, Blaster, DWThemeOn, DWThemeOff, Idle} SFMstates;
+  SFMstates state = Idle;
 
-  int DWSongFlag = 1;
+  uint16_t CurrentVolume = 0, PreviousVolume = 0;
+
+  RGBColor(0,0,0);
+  ADC1->CR2 |= ADC_CR2_CAL;
+  HAL_Delay(100);
+
+  ADC1->CR2 |= ADC_CR2_SWSTART;
+  while(!(ADC1->SR & ADC_SR_EOC));
+  CurrentVolume = (ADC1->DR);
+  UARTCommand(SetVolume, 0, CurrentVolume);
+  UARTCommand(PlaySong, 5, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,24 +150,154 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	while(!(TIM1->SR & TIM_SR_CC2IF));
-	OnTime = TIM1->CCR2; //Capture Clock Count of On Time
+	  switch(state){
 
-	while(!(TIM1->SR & TIM_SR_CC1IF));
-	Period = TIM1->CCR1; //Capture Clock Count of Period
+	  case Idle: //This state checks flags and changes state accordingly, everything returns here
 
-	if(((OnTime * 100 / Period) > DWSongDutyCycle) && (DWSongFlag == 1))
-	{
-		UARTCommand(PlayTrack, 0, 0);
-		UARTCommand(FolderLoop, 0, 1);
-		DWSongFlag = 0;
-	}
-	else if(((OnTime * 100 / Period) > DWSongDutyCycle) && (DWSongFlag == 0));
+		  if(GPIOA->IDR & GPIO_IDR_IDR6){ //Happy Birthday Dad <3
+			  while(!(GPIOA->IDR & GPIO_IDR_IDR6));
 
-	else{
-		UARTCommand(PauseTrack, 0, 0);
-		DWSongFlag = 1;
-	}
+			  UARTCommand(PlaySong, 4, 1);
+			  HAL_Delay(1000);
+		  }
+
+		  FlagChecker();
+
+		  if((DWThemeFlag == HIGH) && (ThemePlaying == LOW)){
+			  state = DWThemeOn;
+		  }
+		  else if ((DWThemeFlag == LOW) && (ThemePlaying == HIGH)){
+			  state = DWThemeOff;
+		  }
+
+
+		  else if((LightFlag == HIGH) && (LightStatus == LOW)){
+			  state = LightsOn;
+		  }
+		  else if((LightFlag == LOW) && (LightStatus == HIGH)){
+			  state = LightsOff;
+		  }
+
+
+		  else if((ExterminateFlag == HIGH) && (ThemePlaying == LOW) && (ExterminateLoopCheck == LOW)){
+			  state = Exterminate;
+		  }
+		  else if ((ExterminateFlag == LOW) && (ExterminateLoopCheck == HIGH)){
+			  ExterminateLoopCheck = LOW;
+		  }
+
+
+		  else if((BlasterFlag == HIGH) && (BlasterLoopCheck == LOW) && (ThemePlaying == LOW)){
+			  state = Blaster;
+		  }
+		  else if((BlasterFlag == LOW) && (BlasterLoopCheck == HIGH)){
+		  	  BlasterLoopCheck = LOW;
+		  }
+
+		  ADC1->CR2 |= ADC_CR2_SWSTART;
+		  while(!(ADC1->SR & ADC_SR_EOC));
+		  CurrentVolume = (ADC1->DR);
+		  CurrentVolume = CurrentVolume * 30 / 0xFFF;
+		  if(!((CurrentVolume == PreviousVolume-1)|(CurrentVolume == PreviousVolume)|(CurrentVolume == PreviousVolume+1))){
+			  state = Volume;
+		  }
+		  break;
+
+
+
+	  case Volume: //This state is only reached when the volume knob is changed
+		  PreviousVolume = CurrentVolume;
+		  UARTCommand(SetVolume, 0, CurrentVolume);
+		  state = Idle;
+		  break;
+
+
+
+	  case LightsOn:
+		  uint32_t LightPWM = (ARRValue/100)*RGBDimmer/255;
+		  for (int i = 1; i <= 255; i++){
+			  TIM3->CCR3 = i*LightPWM;
+			  HAL_Delay(5);
+		  }
+		  TIM3->CCR3 = ARRValue;
+		  LightStatus = HIGH;
+		  state = Idle;
+	  		  break;
+
+
+
+	  case LightsOff:
+		  LightPWM = (ARRValue/100)*RGBDimmer/255;
+		  for (int i = 255; i >= 1; i--){
+			  TIM3->CCR3 = i*LightPWM;
+			  HAL_Delay(5);
+		  }
+		  TIM3->CCR3 = 0;
+		  LightStatus = LOW;
+		  state = Idle;
+	  		  break;
+
+
+
+	  case Exterminate:
+		  UARTCommand(PlaySong, 2, 1); //Folder 2 File 1
+		  ExterminateLoopCheck = HIGH;
+		  state = Idle;
+	  		  break;
+
+
+
+	  case Blaster:
+		  UARTCommandNoDelay(PlaySong, 3, 1); //Folder 3 File 1
+
+		  ColorChanger(150, 150, 255, 150, 150, 150, 14);
+		  ColorChanger(150, 150, 150, 204, 0, 255, 13);
+		  ColorChanger(204, 0, 255, 200, 0, 0, 13);
+		  ColorChanger(200, 0, 0, 0, 0, 0, 14);
+/*
+
+		  for (int i = 1; i < 50; i=i+10){ // Orange into Yellow, 6
+			  RGBColor(50 - i, 50 - i, 255-i);
+		  }
+
+		  for (int i = 0; i < 50; i=i+10){ // blue goes from 255 to 192, 6
+			  RGBColor(40 + (2*i), 0, 255-i);
+		  }
+
+		  for (int i = 20; i < 50; i=i+2){ //Purple Color blue goes from 192 to 128, red goes from 128 to 192, 16
+			  RGBColor(154-(2*i), 0, 112-(i));
+		  }
+
+		  for (int i = 0; i < 50; i=i+2){ // Red Color from 196 to 255, 26
+			  RGBColor(48-i, 0, 0);
+		  }*/
+
+		  BlasterLoopCheck = HIGH;
+		  state = Idle;
+	  		  break;
+
+
+
+	  case DWThemeOn:
+		  UARTCommand(FolderLoop, 0, 1); //Loops Folder 1
+		  ThemePlaying = HIGH;
+		  state = Idle;
+	  		  break;
+
+
+
+	  case DWThemeOff:
+		  UARTCommand(PauseTrack, 0 , 0); //Stops Audio
+		  ThemePlaying = LOW;
+		  state = Idle;
+	  		  break;
+
+
+
+	  default:
+		  state = Idle;
+		  break;
+	  }
   }
   /* USER CODE END 3 */
 }
@@ -760,7 +907,7 @@ static void MX_UART4_Init(void)
 
   /* USER CODE END UART4_Init 1 */
   huart4.Instance = UART4;
-  huart4.Init.BaudRate = 115200;
+  huart4.Init.BaudRate = 9600;
   huart4.Init.WordLength = UART_WORDLENGTH_8B;
   huart4.Init.StopBits = UART_STOPBITS_1;
   huart4.Init.Parity = UART_PARITY_NONE;
@@ -823,8 +970,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

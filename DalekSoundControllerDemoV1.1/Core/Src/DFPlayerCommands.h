@@ -8,6 +8,10 @@
 #ifndef SRC_DFPLAYERCOMMANDS_H_
 #define SRC_DFPLAYERCOMMANDS_H_
 
+//All commands are made with reference to both of the following websites
+//https://cahamo.delphidabbler.com/resources/dfplayer-mini
+//https://picaxe.com/docs/spe033.pdf
+
 
 #define PlaySong 0x0F //Use parameters to declare folder number and song number
 #define SetEQ 0x07 //Use parameters to declare EQ
@@ -42,6 +46,7 @@
 */
 void UARTCommand(uint8_t Command, uint8_t Param1, uint8_t Param2);
 void UARTCommandF(uint8_t Command, uint8_t Param1, uint8_t Param2);
+void UARTCommandNoDelay(uint8_t Command, uint8_t Param1, uint8_t Param2);
 void UARTSend (uint8_t data);
 void MiniPlayerInit(void);
 

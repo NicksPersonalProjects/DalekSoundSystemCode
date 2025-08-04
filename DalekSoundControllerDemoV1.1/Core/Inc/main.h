@@ -59,8 +59,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define PWMInput4_Pin GPIO_PIN_0
-#define PWMInput4_GPIO_Port GPIOA
+#define PWMInput4_Blaster_Pin GPIO_PIN_0
+#define PWMInput4_Blaster_GPIO_Port GPIOA
 #define ADCVolume_Pin GPIO_PIN_1
 #define ADCVolume_GPIO_Port GPIOA
 #define PWMInput5_Pin GPIO_PIN_2
@@ -71,18 +71,16 @@ void Error_Handler(void);
 #define TestButton_GPIO_Port GPIOA
 #define PWMInput6_Pin GPIO_PIN_4
 #define PWMInput6_GPIO_Port GPIOC
-#define PWMInput2_Pin GPIO_PIN_6
-#define PWMInput2_GPIO_Port GPIOC
-#define MainLights_Pin GPIO_PIN_8
-#define MainLights_GPIO_Port GPIOC
+#define PWMInput2_MainLights_Pin GPIO_PIN_6
+#define PWMInput2_MainLights_GPIO_Port GPIOC
+#define MainLightControl_Pin GPIO_PIN_8
+#define MainLightControl_GPIO_Port GPIOC
 #define BlueCtrl_Pin GPIO_PIN_9
 #define BlueCtrl_GPIO_Port GPIOC
-#define PWMInput1_Pin GPIO_PIN_8
-#define PWMInput1_GPIO_Port GPIOA
-#define GreenCtrl_Pin GPIO_PIN_11
-#define GreenCtrl_GPIO_Port GPIOA
-#define PWMInput3_Pin GPIO_PIN_6
-#define PWMInput3_GPIO_Port GPIOB
+#define PWMInput1_DWTheme_Pin GPIO_PIN_8
+#define PWMInput1_DWTheme_GPIO_Port GPIOA
+#define PWMInput3_Exterminate_Pin GPIO_PIN_6
+#define PWMInput3_Exterminate_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
